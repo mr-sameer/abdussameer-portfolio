@@ -21,7 +21,7 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-paper/95 backdrop-blur-sm border-b border-paper-border">
+    <header className="sticky top-0 z-40 w-full bg-paper border-b border-paper-border shadow-xs">
       <Container className="flex h-20 items-center justify-between">
         {/* Brand Logo */}
         <Link

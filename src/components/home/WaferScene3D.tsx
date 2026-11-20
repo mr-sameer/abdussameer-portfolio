@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { SemiconductorLattice } from '@/components/home/SemiconductorLattice';
 
-export const WaferScene3D: React.FC = () => {
+export const WaferScene3D: React.FC<{ className?: string }> = ({ className }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [webGLFailed, setWebGLFailed] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -29,26 +29,27 @@ export const WaferScene3D: React.FC = () => {
       return;
     }
 
-    const width = container.clientWidth || 540;
-    const height = container.clientHeight || 540;
+    const width = container.clientWidth || 640;
+    const height = container.clientHeight || 640;
 
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.25;
+    renderer.toneMappingExposure = 1.35;
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
 
-    // Camera setup with refined perspective
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-    camera.position.set(0, -0.2, 7.6);
+    // Camera setup with refined perspective & initial dolly-in position
+    const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 100);
+    const targetCameraZ = 7.4;
+    camera.position.set(0, -0.15, prefersReducedMotion ? targetCameraZ : 9.8);
 
     // Master group containing all 3D components
     const masterGroup = new THREE.Group();
     // Default cinematic tilt: tilted forward to reveal surface depth
-    masterGroup.rotation.x = 0.55;
-    masterGroup.rotation.y = -0.35;
+    masterGroup.rotation.x = 0.52;
+    masterGroup.rotation.y = -0.32;
     scene.add(masterGroup);
 
     // ==========================================
@@ -67,35 +68,35 @@ export const WaferScene3D: React.FC = () => {
       false
     );
     const waferMaterial = new THREE.MeshStandardMaterial({
-      color: 0x080f1a,
-      metalness: 0.92,
-      roughness: 0.18,
+      color: 0x060b14,
+      metalness: 0.95,
+      roughness: 0.14,
     });
     const waferMesh = new THREE.Mesh(waferGeometry, waferMaterial);
     waferMesh.rotation.x = Math.PI / 2;
     masterGroup.add(waferMesh);
 
-    // Outer wafer bevel ring (mirror-polished edge chamfer)
+    // Outer wafer bevel ring (mirror-polished edge chamfer with vermilion tint)
     const bevelGeometry = new THREE.RingGeometry(waferRadius - 0.03, waferRadius + 0.02, 96);
     const bevelMaterial = new THREE.MeshStandardMaterial({
       color: 0xff5d37,
-      metalness: 0.9,
-      roughness: 0.1,
+      metalness: 0.92,
+      roughness: 0.08,
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.85,
+      opacity: 0.9,
     });
     const bevelRing = new THREE.Mesh(bevelGeometry, bevelMaterial);
     bevelRing.position.z = waferThickness / 2 + 0.002;
     masterGroup.add(bevelRing);
 
     // Substrate outer guide ring with laser fiducials
-    const outerGuideGeo = new THREE.RingGeometry(2.32, 2.34, 64);
+    const outerGuideGeo = new THREE.RingGeometry(2.32, 2.345, 64);
     const outerGuideMat = new THREE.MeshBasicMaterial({
-      color: 0x3a4655,
+      color: 0x4a5868,
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.4,
+      opacity: 0.45,
     });
     const outerGuide = new THREE.Mesh(outerGuideGeo, outerGuideMat);
     outerGuide.position.z = waferThickness / 2 + 0.004;
@@ -104,7 +105,6 @@ export const WaferScene3D: React.FC = () => {
     // ==========================================
     // 2. LAYERED STEPPER DIE GRID (MICROCHIP DIES)
     // ==========================================
-    // Grid of silicon microchips etched across the wafer disk
     const dieGroup = new THREE.Group();
     const dieWidth = 0.38;
     const dieHeight = 0.38;
@@ -115,23 +115,23 @@ export const WaferScene3D: React.FC = () => {
 
     const dieBaseGeometry = new THREE.BoxGeometry(dieWidth, dieHeight, dieThickness);
     
-    // Materials for dies with subtle variation representing multi-layer metal stacks
+    // Materials for dies representing multi-layer metal stacks
     const dieMatA = new THREE.MeshStandardMaterial({
-      color: 0x0e1726,
-      metalness: 0.88,
-      roughness: 0.28,
+      color: 0x0a1422,
+      metalness: 0.9,
+      roughness: 0.24,
     });
     const dieMatB = new THREE.MeshStandardMaterial({
-      color: 0x142033,
-      metalness: 0.82,
-      roughness: 0.22,
+      color: 0x111e30,
+      metalness: 0.85,
+      roughness: 0.18,
     });
     const dieMatHighlighted = new THREE.MeshStandardMaterial({
-      color: 0x1d2d47,
-      metalness: 0.95,
-      roughness: 0.15,
-      emissive: 0x22120a,
-      emissiveIntensity: 0.3,
+      color: 0x182842,
+      metalness: 0.96,
+      roughness: 0.12,
+      emissive: 0x2d140a,
+      emissiveIntensity: 0.4,
     });
 
     const activeDieCoordinates: THREE.Vector3[] = [];
@@ -167,36 +167,36 @@ export const WaferScene3D: React.FC = () => {
     // ==========================================
     const coreGroup = new THREE.Group();
 
-    // Package Substrate Base
-    const pkgBaseGeo = new THREE.BoxGeometry(1.22, 1.22, 0.045);
+    // Package Substrate Base (Multi-chip interposer)
+    const pkgBaseGeo = new THREE.BoxGeometry(1.24, 1.24, 0.045);
     const pkgBaseMat = new THREE.MeshStandardMaterial({
-      color: 0x0a1424,
-      metalness: 0.95,
-      roughness: 0.12,
+      color: 0x08121f,
+      metalness: 0.96,
+      roughness: 0.1,
     });
     const pkgBase = new THREE.Mesh(pkgBaseGeo, pkgBaseMat);
     pkgBase.position.z = waferThickness / 2 + 0.025;
     coreGroup.add(pkgBase);
 
     // Central Compute Logic Die
-    const logicDieGeo = new THREE.BoxGeometry(0.55, 0.55, 0.04);
+    const logicDieGeo = new THREE.BoxGeometry(0.56, 0.56, 0.042);
     const logicDieMat = new THREE.MeshStandardMaterial({
-      color: 0x18263e,
+      color: 0x142238,
       metalness: 0.98,
-      roughness: 0.08,
-      emissive: 0x3d170a,
-      emissiveIntensity: 0.45,
+      roughness: 0.06,
+      emissive: 0x44180c,
+      emissiveIntensity: 0.55,
     });
     const logicDie = new THREE.Mesh(logicDieGeo, logicDieMat);
     logicDie.position.z = waferThickness / 2 + 0.055;
     coreGroup.add(logicDie);
 
-    // 4 High Bandwidth Memory (HBM) Stacks flanking the central die
-    const hbmGeo = new THREE.BoxGeometry(0.18, 0.32, 0.035);
+    // 4 High Bandwidth Memory (HBM3e) Stacks flanking the central die
+    const hbmGeo = new THREE.BoxGeometry(0.18, 0.32, 0.038);
     const hbmMat = new THREE.MeshStandardMaterial({
-      color: 0x111c2e,
-      metalness: 0.9,
-      roughness: 0.2,
+      color: 0x0e1828,
+      metalness: 0.92,
+      roughness: 0.16,
     });
 
     const hbmOffsets = [
@@ -235,12 +235,12 @@ export const WaferScene3D: React.FC = () => {
 
     // Inner reticle target ring (vermilion laser alignment)
     const reticleRing1 = new THREE.Mesh(
-      new THREE.RingGeometry(0.92, 0.932, 64),
+      new THREE.RingGeometry(0.92, 0.934, 64),
       new THREE.MeshBasicMaterial({
         color: 0xff5d37,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.65,
+        opacity: 0.7,
       })
     );
     reticleRing1.position.z = waferThickness / 2 + 0.05;
@@ -248,12 +248,12 @@ export const WaferScene3D: React.FC = () => {
 
     // Secondary dashed measurement ring
     const reticleRing2 = new THREE.Mesh(
-      new THREE.RingGeometry(1.65, 1.662, 64),
+      new THREE.RingGeometry(1.65, 1.664, 64),
       new THREE.MeshBasicMaterial({
         color: 0xd9d5cd,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.3,
+        opacity: 0.35,
       })
     );
     reticleRing2.position.z = waferThickness / 2 + 0.052;
@@ -265,16 +265,16 @@ export const WaferScene3D: React.FC = () => {
       dashSize: 0.08,
       gapSize: 0.05,
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.55,
     });
 
-    const crossPointsX = [new THREE.Vector3(-2.2, 0, waferThickness / 2 + 0.04), new THREE.Vector3(2.2, 0, waferThickness / 2 + 0.04)];
+    const crossPointsX = [new THREE.Vector3(-2.25, 0, waferThickness / 2 + 0.04), new THREE.Vector3(2.25, 0, waferThickness / 2 + 0.04)];
     const crossGeoX = new THREE.BufferGeometry().setFromPoints(crossPointsX);
     const crosshairLineX = new THREE.Line(crossGeoX, crosshairMat);
     crosshairLineX.computeLineDistances();
     reticleGroup.add(crosshairLineX);
 
-    const crossPointsY = [new THREE.Vector3(0, -2.2, waferThickness / 2 + 0.04), new THREE.Vector3(0, 2.2, waferThickness / 2 + 0.04)];
+    const crossPointsY = [new THREE.Vector3(0, -2.25, waferThickness / 2 + 0.04), new THREE.Vector3(0, 2.25, waferThickness / 2 + 0.04)];
     const crossGeoY = new THREE.BufferGeometry().setFromPoints(crossPointsY);
     const crosshairLineY = new THREE.Line(crossGeoY, crosshairMat);
     crosshairLineY.computeLineDistances();
@@ -283,7 +283,7 @@ export const WaferScene3D: React.FC = () => {
     masterGroup.add(reticleGroup);
 
     // ==========================================
-    // 5. MICROCHIP CIRCUIT BUS TRACES (ORTHOGONAL ROADS)
+    // 5. MICROCHIP CIRCUIT BUS TRACES
     // ==========================================
     const circuitPoints: THREE.Vector3[] = [];
     const traceCount = 28;
@@ -295,7 +295,6 @@ export const WaferScene3D: React.FC = () => {
       const rOuter = 2.05 + (i % 3) * 0.12;
 
       const p0 = new THREE.Vector3(Math.cos(angle) * rInner, Math.sin(angle) * rInner, waferThickness / 2 + 0.035);
-      // 45° step to create signature photolithography routing
       const p1 = new THREE.Vector3(Math.cos(angle) * rCorner, Math.sin(angle) * rCorner, waferThickness / 2 + 0.035);
       const angleShift = angle + ((i % 2 === 0 ? 1 : -1) * 0.25);
       const p2 = new THREE.Vector3(Math.cos(angleShift) * (rCorner + 0.35), Math.sin(angleShift) * (rCorner + 0.35), waferThickness / 2 + 0.035);
@@ -308,7 +307,7 @@ export const WaferScene3D: React.FC = () => {
     const circuitMat = new THREE.LineBasicMaterial({
       color: 0xff5d37,
       transparent: true,
-      opacity: 0.35,
+      opacity: 0.38,
     });
     const circuitLines = new THREE.LineSegments(circuitGeo, circuitMat);
     masterGroup.add(circuitLines);
@@ -316,8 +315,6 @@ export const WaferScene3D: React.FC = () => {
     // ==========================================
     // 6. INTERCONNECTED KNOWLEDGE NODES & DATA PATHS
     // ==========================================
-    // 6 elevated orbiting nodes representing the intellectual pillars:
-    // Computer Science, AI, Economics, Finance, Mathematics, Psychology
     const knowledgeGroup = new THREE.Group();
     const nodeCount = 6;
     const nodeMeshes: THREE.Mesh[] = [];
@@ -346,7 +343,7 @@ export const WaferScene3D: React.FC = () => {
       const coreMat = new THREE.MeshStandardMaterial({
         color: nodeColors[i],
         emissive: nodeColors[i],
-        emissiveIntensity: 0.6,
+        emissiveIntensity: 0.65,
         roughness: 0.2,
         metalness: 0.8,
       });
@@ -360,7 +357,7 @@ export const WaferScene3D: React.FC = () => {
         color: nodeColors[i],
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.5,
+        opacity: 0.55,
       });
       const haloMesh = new THREE.Mesh(nodeHaloGeo, haloMat);
       haloMesh.position.copy(pos);
@@ -378,29 +375,20 @@ export const WaferScene3D: React.FC = () => {
     const packetGeo = new THREE.SphereGeometry(0.035, 12, 12);
 
     nodePositions.forEach((pos, idx) => {
-      const startPoint = new THREE.Vector3(
-        pos.x * 0.22,
-        pos.y * 0.22,
-        waferThickness / 2 + 0.08
-      );
-      // Mid control point with elegant upward arc
-      const midPoint = new THREE.Vector3(
-        pos.x * 0.62,
-        pos.y * 0.62,
-        pos.z + 0.28
-      );
-      const endPoint = pos.clone();
+      const start = new THREE.Vector3(0, 0, waferThickness / 2 + 0.08);
+      const mid1 = new THREE.Vector3(pos.x * 0.35, pos.y * 0.35, 0.65 + (idx % 2) * 0.15);
+      const mid2 = new THREE.Vector3(pos.x * 0.75, pos.y * 0.75, pos.z + 0.25);
+      const end = pos.clone();
 
-      const curve = new THREE.CubicBezierCurve3(startPoint, midPoint, midPoint, endPoint);
+      const curve = new THREE.CubicBezierCurve3(start, mid1, mid2, end);
       splineCurves.push(curve);
 
-      // Render the arc path
-      const points = curve.getPoints(36);
-      const arcGeo = new THREE.BufferGeometry().setFromPoints(points);
+      const curvePoints = curve.getPoints(36);
+      const arcGeo = new THREE.BufferGeometry().setFromPoints(curvePoints);
       const arcMat = new THREE.LineBasicMaterial({
         color: 0xff5d37,
         transparent: true,
-        opacity: 0.3,
+        opacity: 0.32,
       });
       const arcLine = new THREE.Line(arcGeo, arcMat);
       splineGroup.add(arcLine);
@@ -418,34 +406,61 @@ export const WaferScene3D: React.FC = () => {
     masterGroup.add(splineGroup);
 
     // ==========================================
-    // 7. CINEMATIC LIGHTING DESIGN
+    // 7. VOLUMETRIC CLEANROOM PARTICLES
     // ==========================================
-    // Ambient light: subtle illumination to maintain deep ink contrast
-    const ambientLight = new THREE.AmbientLight(0xf5f1e9, 0.55);
+    // Floating micro-particles catching specular grazing light in 3D cleanroom atmosphere
+    const particleCount = 120;
+    const particlePositions = new Float32Array(particleCount * 3);
+    const particleSpeeds = new Float32Array(particleCount);
+
+    for (let i = 0; i < particleCount; i++) {
+      const idx = i * 3;
+      particlePositions[idx] = (Math.random() - 0.5) * 8.0;
+      particlePositions[idx + 1] = (Math.random() - 0.5) * 8.0;
+      particlePositions[idx + 2] = (Math.random() - 0.2) * 4.5;
+      particleSpeeds[i] = 0.2 + Math.random() * 0.5;
+    }
+
+    const particleGeo = new THREE.BufferGeometry();
+    particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+    const particleMat = new THREE.PointsMaterial({
+      color: 0xff5d37,
+      size: 0.045,
+      transparent: true,
+      opacity: 0.45,
+      blending: THREE.AdditiveBlending,
+    });
+    const particleField = new THREE.Points(particleGeo, particleMat);
+    scene.add(particleField);
+
+    // ==========================================
+    // 8. CINEMATIC LIGHTING DESIGN
+    // ==========================================
+    const ambientLight = new THREE.AmbientLight(0xf5f1e9, 0.58);
     scene.add(ambientLight);
 
     // Primary Grazing Key Light: sharp specular reflections on dies
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.8);
-    keyLight.position.set(4.5, 5.0, 6.5);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 3.2);
+    keyLight.position.set(5.0, 5.5, 7.0);
     scene.add(keyLight);
 
-    // Signature Vermilion Point Light: vibrant warm glow from the side
-    const vermilionLight = new THREE.PointLight(0xff5d37, 4.2, 14, 1.2);
-    vermilionLight.position.set(-3.5, -2.5, 3.2);
+    // Signature Vermilion Point Light: vibrant warm glow from the left flank
+    const vermilionLight = new THREE.PointLight(0xff5d37, 4.8, 16, 1.2);
+    vermilionLight.position.set(-4.0, -2.8, 3.5);
     scene.add(vermilionLight);
 
     // Cyan/Blue Accent Rim Light: high-tech semiconductor laboratory ambiance
-    const rimLight = new THREE.PointLight(0x4a9eff, 2.2, 12, 1.5);
-    rimLight.position.set(3.2, -3.2, 2.0);
+    const rimLight = new THREE.PointLight(0x4a9eff, 2.6, 14, 1.5);
+    rimLight.position.set(3.5, -3.5, 2.2);
     scene.add(rimLight);
 
     // ==========================================
-    // 8. INTERACTION & CAMERA PARALLAX ENGINE
+    // 9. INTERACTION & CAMERA PARALLAX ENGINE
     // ==========================================
-    let targetTiltX = 0.55;
-    let targetTiltY = -0.35;
-    let currentTiltX = 0.55;
-    let currentTiltY = -0.35;
+    let targetTiltX = 0.52;
+    let targetTiltY = -0.32;
+    let currentTiltX = 0.52;
+    let currentTiltY = -0.32;
 
     const handleMouseMove = (e: MouseEvent) => {
       if (prefersReducedMotion) return;
@@ -454,8 +469,8 @@ export const WaferScene3D: React.FC = () => {
       const y = (e.clientY - rect.top) / rect.height - 0.5;
       
       // Responsive interactive tilt angle
-      targetTiltX = 0.55 + y * 0.38;
-      targetTiltY = -0.35 + x * 0.45;
+      targetTiltX = 0.52 + y * 0.34;
+      targetTiltY = -0.32 + x * 0.42;
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -473,7 +488,7 @@ export const WaferScene3D: React.FC = () => {
     observer.observe(container);
 
     // ==========================================
-    // 9. ANIMATION LOOP
+    // 10. ANIMATION LOOP WITH CAMERA INTRO DOLLY
     // ==========================================
     let animationFrameId: number;
     const clock = new THREE.Clock();
@@ -484,6 +499,11 @@ export const WaferScene3D: React.FC = () => {
       if (!isVisible) return;
 
       const elapsedTime = clock.getElapsedTime();
+
+      // Camera intro dolly animation on initial page load
+      if (!prefersReducedMotion && camera.position.z > targetCameraZ + 0.01) {
+        camera.position.z += (targetCameraZ - camera.position.z) * 0.05;
+      }
 
       if (!prefersReducedMotion) {
         // Damped smooth mouse tilt interpolation
@@ -505,7 +525,6 @@ export const WaferScene3D: React.FC = () => {
           const curve = splineCurves[idx];
           const point = curve.getPointAt(t);
           packet.position.copy(point);
-          // Scale pulse as it travels
           const scale = 0.8 + Math.sin(t * Math.PI) * 0.5;
           packet.scale.set(scale, scale, scale);
         });
@@ -515,6 +534,18 @@ export const WaferScene3D: React.FC = () => {
           const pulse = 1.0 + Math.sin(elapsedTime * 2.0 + idx) * 0.12;
           halo.scale.set(pulse, pulse, pulse);
         });
+
+        // Drift cleanroom particles gently
+        const posAttr = particleGeo.attributes.position as THREE.BufferAttribute;
+        const array = posAttr.array as Float32Array;
+        for (let i = 0; i < particleCount; i++) {
+          const idx = i * 3;
+          array[idx + 1] += particleSpeeds[i] * 0.003;
+          if (array[idx + 1] > 4.0) {
+            array[idx + 1] = -4.0;
+          }
+        }
+        posAttr.needsUpdate = true;
       }
 
       renderer.render(scene, camera);
@@ -555,8 +586,7 @@ export const WaferScene3D: React.FC = () => {
       nodeCoreGeo.dispose();
       nodeHaloGeo.dispose();
       packetGeo.dispose();
-      crossGeoX.dispose();
-      crossGeoY.dispose();
+      particleGeo.dispose();
 
       // Dispose materials
       waferMaterial.dispose();
@@ -571,10 +601,11 @@ export const WaferScene3D: React.FC = () => {
       frameMat.dispose();
       circuitMat.dispose();
       crosshairMat.dispose();
+      particleMat.dispose();
 
       renderer.dispose();
-      if (renderer.domElement && container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement);
+      if (renderer.domElement && renderer.domElement.parentNode) {
+        renderer.domElement.parentNode.removeChild(renderer.domElement);
       }
     };
   }, []);
@@ -586,15 +617,10 @@ export const WaferScene3D: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[420px] sm:h-[480px] lg:h-[560px] flex items-center justify-center select-none"
-      aria-label="Interactive 3D semiconductor wafer and interconnected knowledge network"
-    >
-      {/* Instant vector SVG fallback visible until Three.js GPU canvas initializes */}
-      {!isReady && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <SemiconductorLattice />
-        </div>
-      )}
-    </div>
+      className={`relative select-none ${className || 'w-full h-full min-h-[500px] flex items-center justify-center'}`}
+      style={{ opacity: isReady ? 1 : 0, transition: 'opacity 0.6s ease-out' }}
+      aria-label="Interactive 3D semiconductor wafer architecture"
+      role="img"
+    />
   );
 };
