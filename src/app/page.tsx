@@ -1,13 +1,10 @@
 import React from 'react';
 import { Hero } from '@/components/home/Hero';
-import { Ticker } from '@/components/home/Ticker';
-import { PersonSection } from '@/components/home/PersonSection';
-import { DisciplinesSection } from '@/components/home/DisciplinesSection';
-import { ProjectsSection } from '@/components/home/ProjectsSection';
-import { ResearchGrid } from '@/components/home/ResearchGrid';
-import { ApproachSection } from '@/components/home/ApproachSection';
-import { FocusSection } from '@/components/home/FocusSection';
-import { ContactSection } from '@/components/home/ContactSection';
+import { KnowledgeNetwork } from '@/components/home/KnowledgeNetwork';
+import { SelectedProjects } from '@/components/home/SelectedProjects';
+import { CompanyIntelPreview } from '@/components/home/CompanyIntelPreview';
+import { ResearchPreview } from '@/components/home/ResearchPreview';
+import { AboutContactSection } from '@/components/home/AboutContactSection';
 
 export default function HomePage() {
   return (
@@ -16,32 +13,23 @@ export default function HomePage() {
         Top of page
       </div>
 
-      {/* 1. Interdisciplinary Hero with 3D Wafer / SVG Reticle */}
+      {/* 01. Cinematic Hero with 3D Semiconductor Wafer & Orbiting Nodes */}
       <Hero />
 
-      {/* 2. Coverage Stream Ticker */}
-      <Ticker />
+      {/* 02. Interdisciplinary Knowledge Network (10-Field Convergence Graph) */}
+      <KnowledgeNetwork />
 
-      {/* 3. The Person Behind the Ideas (Education & Experience) */}
-      <PersonSection />
+      {/* 03. Selected Projects & Systems (Curated Empirical Builds) */}
+      <SelectedProjects />
 
-      {/* 4. Connecting Disciplines (Intellectual Dimensions & Cross-Syntheses) */}
-      <DisciplinesSection />
+      {/* 04. Corporate Intelligence (ASML · NVIDIA · TSMC Moat Teardowns) */}
+      <CompanyIntelPreview />
 
-      {/* 5. Projects and Things I'm Building */}
-      <ProjectsSection />
+      {/* 05. Selected Research & Value Chains (4-Tier Structural Value-Chain Map) */}
+      <ResearchPreview />
 
-      {/* 6. Independent Research Dossier */}
-      <ResearchGrid />
-
-      {/* 7. Analytical Approach */}
-      <ApproachSection />
-
-      {/* 8. Research Horizons */}
-      <FocusSection />
-
-      {/* 9. Direct Inquiry & Dialogue */}
-      <ContactSection />
+      {/* 06. Personal Introduction & Subpage Navigation Hub & Direct Contact */}
+      <AboutContactSection />
     </>
   );
 }
