@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, ArrowUpRight } from 'lucide-react';
 import { Container } from '@/components/ui/Container';
 import { MobileDrawer } from '@/components/layout/MobileDrawer';
@@ -10,6 +11,14 @@ import { NAVIGATION_LINKS } from '@/lib/constants';
 export const Header: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const pathname = usePathname();
+
+  const getResolvedHref = (href: string) => {
+    if (href.startsWith('#')) {
+      return pathname === '/' ? href : `/${href}`;
+    }
+    return href;
+  };
 
   return (
     <header className="sticky top-0 z-40 w-full bg-paper/95 backdrop-blur-sm border-b border-paper-border">
@@ -26,22 +35,25 @@ export const Header: React.FC = () => {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-7 text-sm font-semibold text-ink" aria-label="Main Navigation">
           {NAVIGATION_LINKS.map((link) => {
-            const isPageLink = link.href.startsWith('/');
-            if (isPageLink) {
+            const resolvedHref = getResolvedHref(link.href);
+            const isRouterLink = resolvedHref.startsWith('/') || resolvedHref.startsWith('/#');
+
+            if (isRouterLink) {
               return (
                 <Link
                   key={link.href}
-                  href={link.href}
+                  href={resolvedHref}
                   className="text-ink hover:text-vermilion transition-colors tracking-tight py-1"
                 >
                   {link.label}
                 </Link>
               );
             }
+
             return (
               <a
                 key={link.href}
-                href={link.href}
+                href={resolvedHref}
                 className="text-ink hover:text-vermilion transition-colors tracking-tight py-1"
               >
                 {link.label}
@@ -52,13 +64,13 @@ export const Header: React.FC = () => {
 
         {/* Connect Action & Mobile Toggle */}
         <div className="flex items-center gap-4">
-          <a
-            href="#contact"
+          <Link
+            href={pathname === '/' ? '#contact' : '/#contact'}
             className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold text-ink hover:text-vermilion transition-colors"
           >
             <span>Let’s connect</span>
             <ArrowUpRight className="w-4 h-4 text-vermilion" />
-          </a>
+          </Link>
 
           {/* Mobile Menu Button */}
           <button

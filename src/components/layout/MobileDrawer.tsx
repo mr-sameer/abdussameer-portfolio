@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion } from 'motion/react';
 import { X, ArrowUpRight } from 'lucide-react';
 import { NAVIGATION_LINKS } from '@/lib/constants';
@@ -14,6 +16,12 @@ interface MobileDrawerProps {
 
 export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose, triggerRef }) => {
   const drawerRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Body scroll locking and Escape key handler
   useEffect(() => {
@@ -73,7 +81,14 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose, tri
     triggerRef.current?.focus();
   };
 
-  return (
+  const getResolvedHref = (href: string) => {
+    if (href.startsWith('#')) {
+      return pathname === '/' ? href : `/${href}`;
+    }
+    return href;
+  };
+
+  const drawerContent = (
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-50 md:hidden" aria-labelledby="drawer-title" role="dialog" aria-modal="true">
@@ -116,12 +131,14 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose, tri
               {/* Navigation Links */}
               <nav className="mt-8 flex flex-col gap-4" aria-label="Mobile Navigation">
                 {NAVIGATION_LINKS.map((link) => {
-                  const isPageLink = link.href.startsWith('/');
-                  if (isPageLink) {
+                  const resolvedHref = getResolvedHref(link.href);
+                  const isExternalOrRootAnchor = resolvedHref.startsWith('/#') || resolvedHref.startsWith('/');
+
+                  if (isExternalOrRootAnchor) {
                     return (
                       <Link
                         key={link.href}
-                        href={link.href}
+                        href={resolvedHref}
                         onClick={handleLinkClick}
                         className="font-serif text-2xl text-ink hover:text-vermilion transition-colors py-1"
                       >
@@ -129,10 +146,11 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose, tri
                       </Link>
                     );
                   }
+
                   return (
                     <a
                       key={link.href}
-                      href={link.href}
+                      href={resolvedHref}
                       onClick={handleLinkClick}
                       className="font-serif text-2xl text-ink hover:text-vermilion transition-colors py-1"
                     >
@@ -145,14 +163,14 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose, tri
 
             {/* Bottom Connect Action */}
             <div className="pt-6 border-t border-paper-border">
-              <a
-                href="#contact"
+              <Link
+                href={pathname === '/' ? '#contact' : '/#contact'}
                 onClick={handleLinkClick}
                 className="inline-flex w-full items-center justify-between px-4 py-3 bg-ink text-paper text-sm font-bold tracking-tight rounded-sm hover:bg-ink/90 transition-colors"
               >
                 <span>Let’s connect</span>
                 <ArrowUpRight className="w-4 h-4 text-vermilion" />
-              </a>
+              </Link>
               <p className="mt-4 text-xs font-mono text-ink-muted text-center">
                 Curiosity · Systems · Solutions
               </p>
@@ -162,4 +180,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({ isOpen, onClose, tri
       )}
     </AnimatePresence>
   );
+
+  if (!mounted) return null;
+  return createPortal(drawerContent, document.body);
 };
