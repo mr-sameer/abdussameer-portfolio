@@ -1,0 +1,109 @@
+@import '../../public/fonts/fonts.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-playfair: 'Playfair Display', Georgia, serif;
+  --font-dmsans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-dmmono: 'DM Mono', ui-monospace, SFMono-Regular, monospace;
+
+  --bg-primary: #f5f1e9;
+  --bg-card: #ebe7df;
+  --bg-muted: #e5e0d7;
+  --bg-dark: #0a1120;
+  --text-primary: #0a1120;
+  --text-secondary: #445064;
+  --text-muted: #596575;
+  --border-line: #d9d5cd;
+  --border-strong: #0a1120;
+  --border-dark: #3a4655;
+  --accent-vermilion: #ff5d37;
+  --accent-vermilion-hover: #e04b26;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-dmsans);
+  }
+
+  body {
+    font-family: var(--font-dmsans);
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Accessible focus indicators */
+  :focus-visible {
+    outline: 2px solid var(--accent-vermilion);
+    outline-offset: 3px;
+  }
+}
+
+/* Skip to content link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  background-color: var(--bg-dark);
+  color: #ffffff;
+  padding: 0.75rem 1.25rem;
+  font-family: var(--font-dmmono);
+  font-size: 0.875rem;
+  font-weight: 600;
+  z-index: 100;
+  transition: top 0.2s ease-in-out;
+  border-radius: 4px;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Continuous Marquee Ticker */
+@keyframes ticker {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker 28s linear infinite;
+}
+
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+/* Reduced Motion Override */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .ticker-track {
+    animation: none !important;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+  }
+}

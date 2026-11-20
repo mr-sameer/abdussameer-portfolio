@@ -1,7 +1,7 @@
 # Implementation Roadmap: AbdusSameer Technology Research Platform
 
-**Document Version:** 1.1.0  
-**Status:** Approved Implementation Schedule  
+**Document Version:** 1.2.0  
+**Status:** Approved Implementation Schedule & Homepage Prototype Plan  
 **Classification:** Phased Milestones, Deliverables & Quality Gates  
 
 ---
@@ -14,12 +14,15 @@ The platform roadmap is structured into three distinct phases, strictly separati
 ┌────────────────────────────────────────────────────────────────────────┐
 │ PHASE 1: MINIMUM VIABLE PRODUCT (Editorial Research Publication)       │
 │ • Next.js App Router + TypeScript (Static Export: output: 'export')    │
+│ • Current stable versions of Next.js, React, Tailwind CSS, TypeScript  │
+│ • Motion package for UI transitions (GSAP & Three.js omitted from MVP) │
+│ • SVG-first semiconductor coordinate lattice in hero                   │
 │ • Deployed to GitHub Pages (retaining Cloudflare Pages portability)    │
 │ • Git-backed MDX Content Pipeline with Zod schema validation           │
 │ • Foundational SEO: Canonical URLs, JSON-LD, sitemap, robots.txt       │
 │ • Pre-generated static Open Graph / Twitter Card social images         │
 │ • Accessible mobile drawer (focus trap, Escape key, scroll lock)       │
-│ • Fully-authored flagship deep dives: ASML and NVIDIA                  │
+│ • Research articles: ASML & NVIDIA (clearly marked as Working Drafts)  │
 └──────────────────────────────────┬─────────────────────────────────────┘
                                    │
                                    ▼
@@ -44,67 +47,18 @@ The platform roadmap is structured into three distinct phases, strictly separati
 
 ---
 
-## 2. Phase Breakdown & Deliverables
+## 2. Phase 1: Homepage Visual Prototype Specification
 
-### Phase 1: Minimum Viable Product (MVP) — Editorial Research Publication
-*Objective: Launch a world-class, high-performance editorial research publication on Next.js.*
-* **Scope & Deliverables:**
-  1. **Core Application Setup:**
-     * Next.js (App Router), TypeScript, Tailwind CSS, `@tailwindcss/typography`.
-     * Static export configuration (`output: 'export'`) targeting GitHub Pages.
-     * Design tokens matching *The Warm Paper / Deep Ink / Vermilion* palette.
-     * Self-hosted WOFF2 fonts (`Playfair Display`, `DM Sans`, `DM Mono`) with CSS fallback metric matching.
-  2. **MDX Content Pipeline:**
-     * Git-backed content layer in `/content/analysis/` (using Velite, Next-MDX-Remote, or Fumadocs).
-     * Zod frontmatter schema validation (dates, reading times, sector tags, primary citations).
-     * Reusable MDX components: `<SummaryBox />`, `<Citation />`, `<RiskCallout />`.
-  3. **Editorial Deliverables:**
-     * Complete, fully-authored **ASML Deep Dive** (lithography moat, EUV supply chain, High-NA transition economics, customer concentration).
-     * Complete, fully-authored **NVIDIA Breakdown** (data center compute, CUDA ecosystem, NVLink moat, hyperscaler CAPEX sensitivity).
-  4. **SEO & Social Graph Engine:**
-     * Pre-generated static Open Graph preview images stored in `/public/og/`.
-     * Complete Schema.org JSON-LD (`Person` and `TechArticle`).
-     * Build-generated XML sitemap, canonical tags, and robots.txt.
-     * Experimental `llms.txt` file at root.
-  5. **Accessible Mobile Navigation:**
-     * Accessible slide-out mobile drawer featuring focus trapping (`aria-modal="true"`), Escape key closure, focus restoration, and body scroll-locking.
-* **Legacy Source File Policy (ADR-009):** Existing files (`index.html`, `asml.html`, `nvidia.html`, `styles.css`) remain untouched on `main`. Cutover occurs upon final deployment.
-* **Dependencies:** Approved ADRs, validated MDX frontmatter schemas.
-* **Acceptance Criteria:**
-  * Lighthouse Performance Score >= 95, Accessibility = 100, SEO = 100.
-  * Public research articles are 100% readable with client-side JavaScript disabled.
-  * Zero 404 links; zero WCAG 2.1 AA accessibility violations.
-
----
-
-### Phase 2: Advanced Editorial & Data Visualizations (Content Hub)
-*Objective: Transform static text into an interactive, data-driven research hub.*
-* **Scope & Deliverables:**
-  1. **Financial & Technical Charts (ECharts):**
-     * Interactive revenue breakdown, gross margin trends, and CAPEX trajectory charts.
-     * Responsive touch/desktop tooltip interaction.
-  2. **Taxonomy & Discovery:**
-     * In-browser client-side fuzzy search (MiniSearch) scanning static JSON.
-     * Category archive views (`/archive/semiconductors`, `/archive/ai-infrastructure`).
-  3. **Reader Engagement:**
-     * Substack / Buttondown newsletter subscription widget.
-     * RSS 2.0 and JSON Feed generation (`/rss.xml`, `/feed.json`).
-  4. **Editorial Storytelling (GSAP):**
-     * Dynamically imported GSAP ScrollTrigger for side-by-side narrative pinning.
-* **Dependencies:** Successful production deployment of Phase 1.
-
----
-
-### Phase 3: Technology Research Intelligence Platform (Future Scope)
-*Objective: Introduce relational intelligence, interactive 3D, and personalized workspaces.*
-* **Scope & Deliverables:**
-  1. **Relational Data Layer (Metadata Only - ADR-005):**
-     * PostgreSQL database via Supabase storing company profiles, metrics, and economic relationships.
-     * Article text remains strictly versioned in Git MDX.
-  2. **Selective 3D Hardware Teardowns (Three.js / R3F):**
-     * Subject to strict performance budgets: sustained 60fps on mobile, < 50MB GPU memory, viewport render-loop pausing, and 2D SVG/WebP fallback.
-  3. **Reader Workspace:**
-     * Magic-link authentication, private marginalia notes, bookmarks, and PDF export.
+### 2.1 Approved Technical Baseline & Corrections
+1. **Framework & Dependencies:** Current stable compatible releases of Next.js App Router, React, TypeScript, and Tailwind CSS.
+2. **Animation Layer:** Current `motion` package using its idiomatic React API. GSAP and Three.js are completely excluded from the homepage prototype.
+3. **Hero Visual:** An **SVG-first semiconductor/lithography coordinate lattice** (clean vector reticle geometry, scalable, accessible). Subtle progressive-enhancement mouse/cursor parallax may be applied via Motion, but the visual renders completely without JavaScript.
+4. **Zero-JS Core Usability:** All editorial headings, body prose, research cards, and primary navigation anchors (`#analysis`, `#about`, `#work`, `#contact`) remain fully rendered and functional in plain HTML when JavaScript is disabled. Client hydration powers only progressive enhancements (e.g., mobile drawer).
+5. **Skip-to-Content Anchor:** Standardized accessible link targeting `<main id="main-content">` to enable direct keyboard navigation past the masthead.
+6. **Accessible Mobile Navigation Drawer:** Focus trapping (`aria-modal="true"`), Escape key handling, focus restoration to toggle button, and body scroll-locking.
+7. **Editorial Status of Research Cards:** In-progress research pieces (ASML and NVIDIA) are explicitly marked as **"Research in Progress" / "Draft Analysis"** to accurately convey editorial status.
+8. **Font Licensing & Delivery:** `Playfair Display`, `DM Sans`, and `DM Mono` are released under the SIL Open Font License (OFL). Verified for self-hosting or build-time optimization via `next/font` with metric fallback matching (`size-adjust`).
+9. **Core Web Vitals Baselines:** Standard web vitals thresholds: LCP <= 2.5s, INP <= 200ms, and CLS <= 0.1 as the required baseline, targeting internal sub-1.5s LCP where achievable.
 
 ---
 
@@ -112,16 +66,16 @@ The platform roadmap is structured into three distinct phases, strictly separati
 
 | Test Layer | Tooling | Quality Gate Target |
 | :--- | :--- | :--- |
-| **Type Safety** | TypeScript (`tsc --noEmit`) | Zero type errors in CI pipeline. |
+| **Type Safety** | TypeScript (`tsc --noEmit`) | Zero type errors in build pipeline. |
 | **Code Consistency** | ESLint + Prettier | Automated pre-commit linting. |
-| **Accessibility (a11y)** | axe-core / Playwright | 100% WCAG 2.1 AA compliance; focus trap verified. |
-| **Primary Link Integrity** | `lychee` in CI | Zero broken internal links or 404 citation URLs. |
-| **SEO & Performance** | Google Lighthouse CI | Performance >= 95, Accessibility = 100, SEO = 100. |
-| **Zero-JS Readability** | Playwright (JS disabled) | Verify full article text renders without hydration. |
+| **Accessibility (a11y)** | axe-core / Playwright | 100% WCAG 2.1 AA compliance (text contrast >= 4.5:1, skip link to `#main-content`, focus trap). |
+| **Link Integrity** | Build Verification | Zero broken internal links or invalid anchor targets. |
+| **Performance (CWV)** | Google Lighthouse CI | LCP <= 2.5s, INP <= 200ms, CLS <= 0.1. |
+| **Zero-JS Readability** | Playwright / Headless (No JS) | Verify full homepage content and navigation function with JS disabled. |
 
 ---
 
-## 4. Open Questions & Decision Points
+## 4. Legacy File Governance (ADR-009)
 
-1. **OPEN QUESTION — Development Branching Strategy:** Should Phase 1 development take place on a dedicated branch (e.g., `feat/nextjs-platform`) with GitHub Actions preview deployments, before merging into `main`? *(Architect recommendation: Yes, keep `main` stable while developing on `feat/nextjs-platform`).*
-2. **OPEN QUESTION — Research Pipeline Pipeline:** Which technology company will be the subject of Research Teardown #3 following ASML and NVIDIA? (Candidates: TSMC, Broadcom, Microsoft, Hyperscaler CAPEX Comparison).
+* Existing repository files (`index.html`, `asml.html`, `nvidia.html`, `styles.css`, `script.js`, `robots.txt`, `sitemap.xml`, `README.md`) remain untouched on the branch.
+* Static export outputs to `/out` without overwriting root legacy HTML files during the prototype phase.

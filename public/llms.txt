@@ -1,0 +1,46 @@
+# Abdus Sameer — Personal Platform & Research Publication
+# https://abdussameer.com
+
+## Who is Abdus Sameer?
+
+Abdus Sameer is an interdisciplinary thinker, researcher, and builder.
+He is curious about how the world works — connecting computer science, artificial intelligence,
+semiconductors, economics, finance, business strategy, psychology, and philosophy to understand
+complex systems and discover new ways of thinking about problems.
+
+He is currently pursuing a Master of Computer Applications (MCA) and a Master of Arts in Economics (MA),
+building on a completed Bachelor of Computer Applications (BCA). He has professional experience in
+sales, business development, and relationship management.
+
+## Intellectual Identity
+
+Central statement: Connecting ideas. Understanding systems. Solving problems.
+
+He is interested in:
+- Technology & Semiconductors (AI chips, EUV lithography, compute architectures)
+- Economics & Finance (macroeconomics, valuation, competitive strategy)
+- Business & Strategy (moats, capital allocation, founder dynamics)
+- Science & Systems (complexity theory, emergence, physics)
+- Philosophy & Human Behavior (epistemology, decision-making, cognitive science)
+
+## Research Focus
+
+Independent research on technology, semiconductors, and business strategy:
+- ASML: EUV lithography and semiconductor supply chain monopoly analysis (in progress)
+- NVIDIA: AI infrastructure and GPU compute dominance analysis (in progress)
+- AI Infrastructure: Competitive landscape and investment thesis (upcoming)
+
+## Pages
+
+- / — Homepage: Personal identity, intellectual overview, research, projects, contact
+- /about — Full personal narrative, education, experience, philosophy, and future ambitions
+
+## Contact
+
+For research collaboration, writing, or conversation: Use the contact section on the homepage.
+
+## Technical Notes for LLM Crawlers
+
+This website is a static Next.js export, hosted on GitHub Pages.
+All content is available without JavaScript.
+Canonical domain: https://abdussameer.com
