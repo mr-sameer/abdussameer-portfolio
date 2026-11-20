@@ -5,152 +5,38 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
 import { Container } from '@/components/ui/Container';
 import { 
-  Cpu, 
-  Binary, 
-  Coins, 
-  BrainCircuit, 
-  Briefcase, 
-  Landmark, 
-  Layers,
-  Compass,
-  History,
-  Users,
-  ArrowRight,
-  Sparkles,
-  ArrowUpRight
+  KnowledgeGraphCanvas, 
+  CONSTELLATION_NODES, 
+  CONSTELLATION_EDGES,
+  ConstellationNode 
+} from '@/components/home/KnowledgeGraphCanvas';
+import { 
+  Sparkles, 
+  ArrowUpRight, 
+  X, 
+  Activity, 
+  Compass, 
+  ChevronRight,
+  Share2
 } from 'lucide-react';
 
-export interface DomainNode {
-  id: string;
-  name: string;
-  shortName: string;
-  category: 'computing' | 'quantitative' | 'economic' | 'behavioural';
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
-
-export const DOMAIN_NODES: DomainNode[] = [
-  { id: 'cs', name: 'Computer Science', shortName: 'CompSci', category: 'computing', description: 'Distributed systems, memory hierarchies, computational complexity', icon: Cpu },
-  { id: 'ai', name: 'Artificial Intelligence', shortName: 'AI', category: 'computing', description: 'Model architectures, algorithmic scaling laws, training efficiency', icon: Binary },
-  { id: 'semi', name: 'Semiconductors & Physics', shortName: 'Silicon', category: 'computing', description: 'Photolithography optics, nanometer nodes, 2.5D/3D packaging', icon: Layers },
-  { id: 'math', name: 'Applied Mathematics', shortName: 'Math', category: 'quantitative', description: 'Numerical optimization, information theory, discrete geometry', icon: Compass },
-  { id: 'macro', name: 'Macroeconomics', shortName: 'Macro', category: 'economic', description: 'Capital allocation cycles, infrastructure buildouts, supply shocks', icon: Landmark },
-  { id: 'fin', name: 'Corporate Finance', shortName: 'Finance', category: 'economic', description: 'Cash-flow duration, economic depreciation, ROIC vs WACC', icon: Coins },
-  { id: 'strat', name: 'Business Strategy', shortName: 'Strategy', category: 'economic', description: 'Switching costs, distribution leverage, structural moat durability', icon: Briefcase },
-  { id: 'psych', name: 'Cognitive Psychology', shortName: 'Psychology', category: 'behavioural', description: 'Heuristics, risk asymmetry, decision-making under uncertainty', icon: BrainCircuit },
-  { id: 'hist', name: 'Economic History', shortName: 'History', category: 'behavioural', description: 'Technological revolutions, infrastructure overbuild, institutional absorption', icon: History },
-  { id: 'behav', name: 'Human Behaviour', shortName: 'Behaviour', category: 'behavioural', description: 'Institutional incentives, organizational culture, reflexivity', icon: Users },
-];
-
-export interface SynthesisPairing {
-  id: string;
-  name: string;
-  domainIds: [string, string];
-  category: string;
-  thesis: string;
-  mechanism: string;
-  caseStudy: string;
-  takeaway: string;
-  relatedLinkText: string;
-  relatedLinkHref: string;
-}
-
-export const SYNTHESIS_PAIRINGS: SynthesisPairing[] = [
-  {
-    id: 'cs-ai',
-    name: 'Computer Science × Artificial Intelligence',
-    domainIds: ['cs', 'ai'],
-    category: 'Computational Architecture',
-    thesis: 'Hardware physics and distributed systems define the real boundaries of machine intelligence.',
-    mechanism: 'Algorithmic breakthroughs are bounded by physical compute infrastructure: memory wall limits, High-Bandwidth Memory (HBM) packaging yields, and GPU cluster networking topologies (NVLink/InfiniBand).',
-    caseStudy: 'Modern LLM training scaling laws are fundamentally distributed systems challenges, not purely mathematical models.',
-    takeaway: 'To evaluate modern AI platforms, one must audit cluster network latencies and compiler optimizations, not just high-level benchmark scores.',
-    relatedLinkText: 'Inspect NVIDIA architecture intelligence',
-    relatedLinkHref: '/companies/nvidia',
-  },
-  {
-    id: 'math-semi',
-    name: 'Mathematics × Semiconductors',
-    domainIds: ['math', 'semi'],
-    category: 'Nanometer Physics & Optics',
-    thesis: 'Translating mathematical principles into nanometer-scale manufacturing realities.',
-    mechanism: 'Optical wave equations, numerical optimization, and discrete geometry dictate how Extreme Ultraviolet (EUV) light at 13.5nm wavelength can be steered by mirror optics polished to picometer precision.',
-    caseStudy: 'ASML’s High-NA EUV lithography systems require real-time anamorphic magnification adjustments computed mathematically at millisecond rates.',
-    takeaway: 'Software abstractions eventually crash against physical engineering limits. True competitive moats exist where mathematics meets atomic precision.',
-    relatedLinkText: 'Read ASML monopoly analysis',
-    relatedLinkHref: '/companies/asml',
-  },
-  {
-    id: 'semi-strat',
-    name: 'Semiconductors × Business Strategy',
-    domainIds: ['semi', 'strat'],
-    category: 'Manufacturing Moats',
-    thesis: 'Pure-play manufacturing scale creates an unassailable capital barrier in advanced silicon.',
-    mechanism: 'Sub-3nm process yield learning curves require multi-billion-dollar annual R&D that only massive, aggregated volume can amortize. Pure-play foundries eliminate customer conflict while locking in capacity.',
-    caseStudy: 'TSMC produces over 90% of global leading-edge logic because no individual fabless company can afford the capital risk of custom manufacturing facilities.',
-    takeaway: 'Process yield learning curves are the ultimate physical moat: knowledge is accumulated per wafer processed, not per dollar spent.',
-    relatedLinkText: 'Explore TSMC foundry intelligence',
-    relatedLinkHref: '/companies/tsmc',
-  },
-  {
-    id: 'econ-fin',
-    name: 'Economics × Corporate Finance',
-    domainIds: ['macro', 'fin'],
-    category: 'Capital Cycles & Valuation',
-    thesis: 'Capital cycles dictate whether technological advances generate shareholder returns or commoditized compute excess.',
-    mechanism: 'Tracking the velocity of hyperscaler capital expenditure, depreciation schedules, and return on invested capital (ROIC) across multi-year infrastructure deployment cycles.',
-    caseStudy: 'Determining whether hundreds of billions in AI data center investment convert into durable software productivity margins or commoditized compute excess.',
-    takeaway: 'Financial accounting often obscures true economic depreciation in rapidly obsolescing hardware architectures.',
-    relatedLinkText: 'Analyze semiconductor value chains',
-    relatedLinkHref: '/research/semiconductor-value-chains',
-  },
-  {
-    id: 'biz-ai',
-    name: 'Business Strategy × Artificial Intelligence',
-    domainIds: ['strat', 'ai'],
-    category: 'Software Ecosystems',
-    thesis: 'Superior technical algorithms do not survive without defensible distribution and high switching costs.',
-    mechanism: 'Deconstructing value-chain power: evaluating customer lock-in, proprietary developer ecosystems (e.g. CUDA), and supplier concentration leverage.',
-    caseStudy: 'NVIDIA’s dominance is governed by the CUDA software library and interconnect fabric, rendering raw silicon competitors economically unviable.',
-    takeaway: 'A company’s pricing power is determined by the cost a customer incurs when attempting to replace it.',
-    relatedLinkText: 'View NVIDIA CUDA moat audit',
-    relatedLinkHref: '/companies/nvidia',
-  },
-  {
-    id: 'psych-econ',
-    name: 'Psychology × Human Behaviour',
-    domainIds: ['psych', 'behav'],
-    category: 'Incentive Structures',
-    thesis: 'Incentive structures, career risk, and cognitive biases determine how capital and technology are actually deployed.',
-    mechanism: 'Decision-makers operate under institutional constraints, loss aversion, and reflexivity—where market perceptions actively alter underlying corporate fundamentals.',
-    caseStudy: 'FOMO-driven hyperscaler CAPEX races: corporate executives risk greater career penalty by under-investing in AI infrastructure than by over-allocating capital.',
-    takeaway: 'Understanding real-world economic and business outcomes requires analyzing human psychology and institutional incentives, not idealized rational models.',
-    relatedLinkText: 'Read full intellectual profile',
-    relatedLinkHref: '/about',
-  },
-];
-
 export const KnowledgeNetwork: React.FC = () => {
-  const [activePairingId, setActivePairingId] = useState<string>('cs-ai');
-  const activePairing = SYNTHESIS_PAIRINGS.find((p) => p.id === activePairingId) || SYNTHESIS_PAIRINGS[0];
+  const [activeNodeId, setActiveNodeId] = useState<string | null>('semi');
 
-  const isDomainActive = (domainId: string) => {
-    return activePairing.domainIds.includes(domainId);
-  };
+  const activeNode: ConstellationNode | undefined = activeNodeId 
+    ? CONSTELLATION_NODES.find((n) => n.id === activeNodeId) 
+    : undefined;
 
-  const handleDomainClick = (domainId: string) => {
-    // Find first pairing that includes this domain
-    const match = SYNTHESIS_PAIRINGS.find(p => p.domainIds.includes(domainId));
-    if (match) {
-      setActivePairingId(match.id);
-    }
-  };
+  // Find all edges connected to the active node
+  const activeConnectedEdges = activeNodeId
+    ? CONSTELLATION_EDGES.filter((e) => e.source === activeNodeId || e.target === activeNodeId)
+    : [];
 
   return (
     <section id="disciplines" className="py-20 lg:py-28 border-b border-paper-border bg-paper">
       <Container>
         {/* Section Header */}
-        <div className="max-w-3xl mb-14">
+        <div className="max-w-3xl mb-12">
           <span className="font-mono text-xs uppercase tracking-widest text-vermilion font-bold block mb-3">
             02 / Interdisciplinary Synthesis
           </span>
@@ -164,189 +50,219 @@ export const KnowledgeNetwork: React.FC = () => {
           </p>
         </div>
 
-        {/* 10-Domain Interactive Network Strip */}
-        <div className="mb-10 p-5 sm:p-6 bg-paper-card border border-paper-border rounded-sm">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-paper-border">
-            <span className="font-mono text-xs uppercase tracking-wider text-ink font-semibold flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-vermilion" aria-hidden="true" />
-              10-Field Convergence Network
-            </span>
-            <span className="font-mono text-[11px] text-ink-muted">
-              Select any discipline or convergence pairing below to inspect the synthesis
-            </span>
-          </div>
+        {/* Constellation Architecture Module */}
+        <div className="space-y-6">
+          {/* Constellation Controls & Telemetry Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-paper-card border border-paper-border rounded-sm">
+            <div className="flex items-center gap-2.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-vermilion animate-pulse shadow-[0_0_6px_#ff5d37]" aria-hidden="true" />
+              <span className="font-mono text-xs uppercase tracking-wider text-ink font-bold">
+                Spatial Knowledge Constellation
+              </span>
+              <span className="hidden sm:inline font-mono text-[11px] text-ink-muted">
+                (Click any node to explore its systemic connections)
+              </span>
+            </div>
 
-          <div className="flex flex-wrap gap-2">
-            {DOMAIN_NODES.map((domain) => {
-              const active = isDomainActive(domain.id);
-              const Icon = domain.icon;
-
-              return (
+            <div className="flex items-center gap-2">
+              {activeNode && (
                 <button
-                  key={domain.id}
                   type="button"
-                  onClick={() => handleDomainClick(domain.id)}
-                  className={`inline-flex items-center gap-2 px-3 py-2 rounded-sm text-xs font-mono transition-all duration-200 border ${
-                    active
-                      ? 'bg-ink text-paper border-ink shadow-sm'
-                      : 'bg-paper text-ink-secondary border-paper-border hover:border-ink/30 hover:text-ink'
-                  }`}
-                  aria-pressed={active}
-                  title={`${domain.name}: ${domain.description}`}
+                  onClick={() => setActiveNodeId(null)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 bg-paper border border-paper-border rounded-sm text-xs font-mono text-ink hover:text-vermilion hover:border-vermilion transition-colors"
+                  aria-label="Deselect active node and return to constellation overview"
                 >
-                  <Icon className={`w-3.5 h-3.5 ${active ? 'text-vermilion' : 'text-ink-muted'}`} />
-                  <span className="font-semibold">{domain.name}</span>
-                  {active && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-vermilion ml-0.5" aria-hidden="true" />
-                  )}
+                  <X className="w-3.5 h-3.5" />
+                  <span>Deselect node</span>
                 </button>
-              );
-            })}
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* Interactive Synthesis Explorer */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
-          {/* Left Column: Interactive Pairing Selector */}
-          <div className="lg:col-span-5 flex flex-col gap-3">
-            <span className="font-mono text-xs uppercase tracking-wider text-ink-muted mb-1 block">
-              Curated Cross-Disciplinary Pairings:
+          {/* Interactive Constellation Canvas */}
+          <KnowledgeGraphCanvas
+            activeNodeId={activeNodeId}
+            onSelectNode={(nodeId) => setActiveNodeId(nodeId)}
+          />
+
+          {/* Quick Domain Selector Bar */}
+          <div className="p-4 bg-paper-card border border-paper-border rounded-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <span className="font-mono text-xs uppercase tracking-wider text-ink-muted">
+              Select domain node:
             </span>
+            <div className="flex flex-wrap gap-1.5">
+              {CONSTELLATION_NODES.map((node) => {
+                const isSelected = activeNodeId === node.id;
+                return (
+                  <button
+                    key={node.id}
+                    type="button"
+                    onClick={() => setActiveNodeId(isSelected ? null : node.id)}
+                    className={`px-2.5 py-1 rounded-sm text-xs font-mono transition-all border ${
+                      isSelected
+                        ? 'bg-ink text-paper border-ink shadow-sm'
+                        : 'bg-paper text-ink-secondary border-paper-border hover:border-ink/30 hover:text-ink'
+                    }`}
+                    aria-pressed={isSelected}
+                  >
+                    {node.shortName}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-            {SYNTHESIS_PAIRINGS.map((pairing) => {
-              const isSelected = pairing.id === activePairingId;
-              const domainA = DOMAIN_NODES.find(d => d.id === pairing.domainIds[0]);
-              const domainB = DOMAIN_NODES.find(d => d.id === pairing.domainIds[1]);
-              const IconA = domainA?.icon || Sparkles;
-              const IconB = domainB?.icon || Sparkles;
-
-              return (
-                <button
-                  key={pairing.id}
-                  type="button"
-                  onClick={() => setActivePairingId(pairing.id)}
-                  className={`w-full text-left p-4 sm:p-5 rounded-sm border transition-all duration-200 flex items-center justify-between group ${
-                    isSelected
-                      ? 'bg-ink text-paper border-ink shadow-md'
-                      : 'bg-paper-card text-ink border-paper-border hover:border-ink/40 hover:bg-paper-muted'
-                  }`}
-                  aria-pressed={isSelected}
-                >
-                  <div className="flex items-center gap-3.5">
-                    <div
-                      className={`w-9 h-9 rounded-sm flex items-center justify-center transition-colors ${
-                        isSelected ? 'bg-vermilion text-ink' : 'bg-paper text-ink-muted group-hover:text-vermilion'
-                      }`}
+          {/* Contextual Synthesis Information Panel */}
+          <AnimatePresence mode="wait">
+            {activeNode ? (
+              <motion.div
+                key={activeNode.id}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -16 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                className="p-8 sm:p-10 bg-paper-card border border-paper-border rounded-sm shadow-md"
+              >
+                {/* Panel Top Meta Bar */}
+                <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-paper-border mb-6">
+                  <div className="flex items-center gap-3">
+                    <div 
+                      className="w-10 h-10 rounded-sm flex items-center justify-center text-paper shadow-sm"
+                      style={{ backgroundColor: activeNode.color }}
                     >
-                      <IconA className="w-4 h-4" />
+                      <activeNode.icon className="w-5 h-5 text-ink" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className={`font-mono text-[11px] uppercase tracking-wider block ${
-                          isSelected ? 'text-vermilion font-semibold' : 'text-ink-muted'
-                        }`}>
-                          {pairing.category}
+                        <span className="font-mono text-xs uppercase tracking-wider text-vermilion font-bold">
+                          {activeNode.category.toUpperCase()} ARCHITECTURE
                         </span>
+                        {activeNode.isCore && (
+                          <span className="font-mono text-[10px] uppercase px-2 py-0.5 rounded-sm bg-vermilion/15 text-vermilion font-bold border border-vermilion/30">
+                            Foundational Core
+                          </span>
+                        )}
                       </div>
-                      <h3 className="font-serif text-base sm:text-lg font-semibold leading-snug">
-                        {pairing.name}
+                      <h3 className="font-serif text-2xl sm:text-3xl font-semibold text-ink leading-tight">
+                        {activeNode.name}
                       </h3>
                     </div>
                   </div>
 
-                  <ArrowRight
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      isSelected
-                        ? 'text-vermilion translate-x-1'
-                        : 'text-ink-muted opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5'
-                    }`}
-                  />
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Right Column: Dynamic Deep Synthesis Dossier */}
-          <div className="lg:col-span-7">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activePairing.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.3, ease: 'easeInOut' }}
-                className="p-8 sm:p-10 bg-paper-card border border-paper-border rounded-sm shadow-sm"
-              >
-                {/* Header Meta */}
-                <div className="flex flex-wrap items-center justify-between gap-3 pb-6 border-b border-paper-border mb-6">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-vermilion" />
-                    <span className="font-mono text-xs uppercase tracking-widest text-vermilion font-bold">
-                      {activePairing.category}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 font-mono text-xs text-ink-muted">
-                    <span className="px-2 py-0.5 bg-paper rounded border border-paper-border text-ink font-semibold">
-                      {DOMAIN_NODES.find(d => d.id === activePairing.domainIds[0])?.name}
-                    </span>
-                    <span>×</span>
-                    <span className="px-2 py-0.5 bg-paper rounded border border-paper-border text-ink font-semibold">
-                      {DOMAIN_NODES.find(d => d.id === activePairing.domainIds[1])?.name}
-                    </span>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveNodeId(null)}
+                    className="p-2 text-ink-muted hover:text-ink transition-colors rounded-sm border border-paper-border hover:border-ink/30"
+                    aria-label="Close active domain dossier"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
 
                 {/* Central Thesis */}
-                <h3 className="font-serif text-2xl sm:text-3xl text-ink font-semibold leading-snug mb-6">
-                  “{activePairing.thesis}”
-                </h3>
+                <h4 className="font-serif text-xl sm:text-2xl text-ink font-semibold leading-snug mb-6">
+                  “{activeNode.thesis}”
+                </h4>
 
-                {/* Detailed Analysis Breakdown */}
-                <div className="space-y-6 pt-2">
-                  <div>
-                    <h4 className="font-mono text-xs uppercase tracking-wider text-ink font-bold mb-2">
-                      The Underlying Mechanism
-                    </h4>
-                    <p className="font-sans text-base text-ink-secondary leading-relaxed">
-                      {activePairing.mechanism}
-                    </p>
+                {/* Analysis Breakdown Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-8">
+                  {/* Left Column: First-Principles Mechanism */}
+                  <div className="lg:col-span-7 space-y-6">
+                    <div>
+                      <h5 className="font-mono text-xs uppercase tracking-wider text-ink font-bold mb-2 flex items-center gap-1.5">
+                        <Activity className="w-3.5 h-3.5 text-vermilion" />
+                        <span>The Underlying Mechanism</span>
+                      </h5>
+                      <p className="font-sans text-base text-ink-secondary leading-relaxed">
+                        {activeNode.mechanism}
+                      </p>
+                    </div>
+
+                    <div className="p-5 bg-paper rounded-sm border border-paper-border">
+                      <h5 className="font-mono text-xs uppercase tracking-wider text-vermilion font-bold mb-2">
+                        Applied Empirical Case Study
+                      </h5>
+                      <p className="font-sans text-sm text-ink leading-relaxed">
+                        {activeNode.caseStudy}
+                      </p>
+                    </div>
+
+                    <div>
+                      <h5 className="font-mono text-xs uppercase tracking-wider text-ink-muted mb-1.5">
+                        Core Analytical Takeaway
+                      </h5>
+                      <p className="font-sans text-sm text-ink-secondary font-medium leading-relaxed">
+                        {activeNode.takeaway}
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="p-5 bg-paper rounded-sm border border-paper-border">
-                    <h4 className="font-mono text-xs uppercase tracking-wider text-vermilion font-bold mb-2">
-                      Applied Case Study
-                    </h4>
-                    <p className="font-sans text-sm text-ink leading-relaxed">
-                      {activePairing.caseStudy}
-                    </p>
-                  </div>
+                  {/* Right Column: Active Relational Convergence Edges */}
+                  <div className="lg:col-span-5 p-6 bg-paper rounded-sm border border-paper-border flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center gap-2 pb-3 border-b border-paper-border mb-4">
+                        <Share2 className="w-3.5 h-3.5 text-vermilion" />
+                        <span className="font-mono text-xs uppercase tracking-wider text-ink font-bold">
+                          Active Relational Couplings ({activeConnectedEdges.length})
+                        </span>
+                      </div>
 
-                  <div className="pt-4 border-t border-paper-border">
-                    <h4 className="font-mono text-xs uppercase tracking-wider text-ink-muted mb-1.5">
-                      Core Analytical Takeaway
-                    </h4>
-                    <p className="font-sans text-sm text-ink-secondary font-medium leading-relaxed">
-                      {activePairing.takeaway}
-                    </p>
-                  </div>
+                      <div className="space-y-3">
+                        {activeConnectedEdges.map((edge) => {
+                          const neighborId = edge.source === activeNode.id ? edge.target : edge.source;
+                          const neighborNode = CONSTELLATION_NODES.find((n) => n.id === neighborId);
+                          if (!neighborNode) return null;
 
-                  {/* Cross Link to Platform Subpage */}
-                  <div className="pt-4 border-t border-paper-border flex items-center justify-between">
-                    <Link
-                      href={activePairing.relatedLinkHref}
-                      className="inline-flex items-center gap-2 font-sans text-sm font-bold text-ink hover:text-vermilion transition-colors group"
-                    >
-                      <span>{activePairing.relatedLinkText}</span>
-                      <ArrowUpRight className="w-4 h-4 text-vermilion transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                    </Link>
-                    <span className="font-mono text-[11px] text-ink-muted hidden sm:inline">
-                      Primary research dossier →
-                    </span>
+                          return (
+                            <button
+                              key={edge.id}
+                              type="button"
+                              onClick={() => setActiveNodeId(neighborNode.id)}
+                              className="w-full text-left p-3 rounded-sm border border-paper-border hover:border-vermilion hover:bg-paper-card transition-all group flex items-start justify-between gap-3"
+                            >
+                              <div>
+                                <span className="font-mono text-[10px] uppercase tracking-wider text-vermilion font-bold block mb-0.5">
+                                  {edge.label}
+                                </span>
+                                <h6 className="font-serif text-sm font-semibold text-ink group-hover:text-vermilion transition-colors">
+                                  {neighborNode.name}
+                                </h6>
+                                <p className="font-sans text-xs text-ink-secondary mt-1">
+                                  {edge.relation}
+                                </p>
+                              </div>
+                              <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-vermilion flex-shrink-0 transition-transform group-hover:translate-x-0.5 mt-1" />
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Direct Cross-Link to Dedicated Research / Company Page */}
+                    <div className="pt-6 mt-6 border-t border-paper-border">
+                      <Link
+                        href={activeNode.relatedLinkHref}
+                        className="inline-flex items-center gap-2 font-sans text-sm font-bold text-ink hover:text-vermilion transition-colors group"
+                      >
+                        <span>{activeNode.relatedLinkText}</span>
+                        <ArrowUpRight className="w-4 h-4 text-vermilion transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </motion.div>
-            </AnimatePresence>
-          </div>
+            ) : (
+              <div className="p-8 bg-paper-card border border-paper-border rounded-sm text-center">
+                <Compass className="w-6 h-6 text-vermilion mx-auto mb-3 opacity-80" />
+                <h4 className="font-serif text-xl font-semibold text-ink mb-1">
+                  Constellation in Overview Mode
+                </h4>
+                <p className="font-sans text-sm text-ink-secondary max-w-md mx-auto">
+                  Click any of the 10 domain nodes in the constellation diagram above or use the selector bar to inspect how computing architecture, macroeconomic capital cycles, and human behaviour connect.
+                </p>
+              </div>
+            )}
+          </AnimatePresence>
         </div>
       </Container>
     </section>
